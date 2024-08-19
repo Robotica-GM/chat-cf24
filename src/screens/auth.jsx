@@ -1,32 +1,30 @@
-import { Component } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList, ImageBackground, Alert } from 'react-native'
-import Ionicons from '@expo/vector-icons/Ionicons'
-import axios from 'axios'
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList, ImageBackground, Alert } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import axios from 'axios';
 
-export default class Login extends Component {
-  state = {
-    username: '',
-    password: '',
-    firstName: '',
-    lastName: '',
-    confirmPassword: '',
-    stageNew: false,
-    showError: false,
-    errors: []
-  }
+export default function Login({ navigation }) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [stageNew, setStageNew] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errors, setErrors] = useState([]);
 
-  signinOrSignup = () => {
-    if (this.state.stageNew) {
-      this.register()
-      Alert.alert('Sucesso!', 'Criar conta')
+  const signinOrSignup = () => {
+    if (stageNew) {
+      register();
+      Alert.alert('Sucesso!', 'Criar conta');
     } else {
-      this.login()
-      Alert.alert('Sucesso!', 'Logar')
+      login();
+      Alert.alert('Sucesso!', 'Logar');
     }
-    console.log(this.state)
-  }
+    console.log({ username, password, firstName, lastName, confirmPassword, stageNew, showError, errors });
+  };
 
-  login = async () => {
+  const login = async () => {
     console.log('iniciando o login');
 
     const headers = {
@@ -34,8 +32,8 @@ export default class Login extends Component {
     };
 
     const data = {
-      username: this.state.username,
-      password: this.state.password,
+      username,
+      password,
     };
 
     try {
@@ -49,22 +47,22 @@ export default class Login extends Component {
       console.log(response.data);
 
       if (response.status === 200) {
-        this.props.navigation.navigate('Chat');
+        navigation.navigate('Chat');
       } else if (response.status === 400 || response.status === 401) {
-        this.setState({ showError: true });
-        const errors = [];
-        response.data.username ? errors.push(`Email: ${response.data.username}`) : null;
-        response.data.password ? errors.push(`Senha: ${response.data.password}`) : null;
-        response.data.detail ? errors.push(`Erro: ${response.data.detail}`) : null;
-        console.log(errors);
-        this.setState({ errors });
+        setShowError(true);
+        const errorList = [];
+        response.data.username && errorList.push(`Email: ${response.data.username}`);
+        response.data.password && errorList.push(`Senha: ${response.data.password}`);
+        response.data.detail && errorList.push(`Erro: ${response.data.detail}`);
+        console.log(errorList);
+        setErrors(errorList);
       }
     } catch (error) {
       console.error('Erro na requisição:', error);
     }
-  }
+  };
 
-  register = async () => {
+  const register = async () => {
     console.log('iniciando o registro');
 
     const headers = {
@@ -72,11 +70,11 @@ export default class Login extends Component {
     };
 
     const data = {
-      username: this.state.username,
-      first_name: this.state.firstName,
-      last_name: this.state.lastName,
-      password: this.state.password,
-      confirm_password: this.state.confirmPassword
+      username,
+      first_name: firstName,
+      last_name: lastName,
+      password,
+      confirm_password: confirmPassword,
     };
 
     try {
@@ -90,132 +88,123 @@ export default class Login extends Component {
       console.log(response.data);
 
       if (response.status === 201) {
-        this.setState({
-          username: '',
-          password: '',
-          firstName: '',
-          lastName: '',
-          confirmPassword: '',
-          stageNew: false,
-          showError: false,
-          errors: []
-        })
+        setUsername('');
+        setPassword('');
+        setFirstName('');
+        setLastName('');
+        setConfirmPassword('');
+        setStageNew(false);
+        setShowError(false);
+        setErrors([]);
       } else if (response.status >= 400 && response.status < 500) {
-        this.setState({ showError: true });
-        const errors = [];
-        response.data.username ? errors.push(`Email: ${response.data.username}`) : null;
-        response.data.password ? errors.push(`Senha: ${response.data.password}`) : null;
-        response.data.detail ? errors.push(`Erro: ${response.data.detail}`) : null;
-        console.log(errors);
-        this.setState({ errors });
+        setShowError(true);
+        const errorList = [];
+        response.data.username && errorList.push(`Email: ${response.data.username}`);
+        response.data.password && errorList.push(`Senha: ${response.data.password}`);
+        response.data.detail && errorList.push(`Erro: ${response.data.detail}`);
+        console.log(errorList);
+        setErrors(errorList);
       }
     } catch (error) {
       console.error('Erro na requisição:', error);
     }
-  } 
-  
+  };
 
-  render() {
-    return (
-      <ImageBackground source={require('../../assets/auth-page.png')} style={styles.container}>
-        <Text style={styles.title}>
-          {this.state.stageNew ? 'Crie sua conta' : 'Faça seu Login'}
-        </Text>
+  return (
+    <ImageBackground source={require('../../assets/auth-page.png')} style={styles.container}>
+      <Text style={styles.title}>
+        {stageNew ? 'Crie sua conta' : 'Faça seu Login'}
+      </Text>
+      <TextInput
+        placeholder='Nome de Usuário, sem espaços, somente letra minuscula sem acento'
+        style={styles.input}
+        autoFocus={true}
+        value={username}
+        placeholderTextColor='#cecece'
+        onChangeText={setUsername}
+      />
+      {stageNew && (
+        <>
+          <TextInput
+            placeholder='Primeiro Nome'
+            style={styles.input}
+            value={firstName}
+            placeholderTextColor='#cecece'
+            onChangeText={setFirstName}
+          />
+          <TextInput
+            placeholder='Segundo/Ultimo Nome'
+            style={styles.input}
+            value={lastName}
+            placeholderTextColor='#cecece'
+            onChangeText={setLastName}
+          />
+        </>
+      )}
+      <TextInput
+        placeholder='Insira sua Senha Aqui'
+        style={styles.input}
+        secureTextEntry={true}
+        value={password}
+        placeholderTextColor='#c0c0c0'
+        onChangeText={setPassword}
+      />
+      {stageNew && (
         <TextInput
-          placeholder='Nome de Usuário, sem espaços, somente letra minuscula sem acento'
-          style={styles.input}
-          autoFocus={true}
-          value={this.state.username}
-          placeholderTextColor='#cecece'
-          onChangeText={username => this.setState({ username })}
-        />
-        {this.state.stageNew ?
-          <>
-            <TextInput
-              placeholder='Primeiro Nome'
-              style={styles.input}
-              value={this.state.firstName}
-              placeholderTextColor='#cecece'
-              onChangeText={firstName => this.setState({ firstName })}
-            />
-            <TextInput
-              placeholder='Segundo/Ultimo Nome'
-              style={styles.input}
-              value={this.state.lastName}
-              placeholderTextColor='#cecece'
-              onChangeText={lastName => this.setState({ lastName })}
-            />
-
-          </>
-          : null}
-        <TextInput
-          placeholder='Insira sua Senha Aqui'
+          placeholder='Confirme sua senha'
           style={styles.input}
           secureTextEntry={true}
-          value={this.state.password}
+          value={confirmPassword}
           placeholderTextColor='#c0c0c0'
-          onChangeText={password => this.setState({ password })}
+          onChangeText={setConfirmPassword}
         />
-        {this.state.stageNew ?
-          <TextInput
-            placeholder='Confirme sua senha'
-            style={styles.input}
-            secureTextEntry={true}
-            value={this.state.confirmPassword}
-            placeholderTextColor='#c0c0c0'
-            onChangeText={confirmPassword => this.setState({ confirmPassword })}
+      )}
+      {showError && (
+        <View style={styles.buttomError}>
+          <FlatList
+            data={errors}
+            keyExtractor={(item, index) => `${index}`}
+            renderItem={({ item }) => (
+              <Text style={styles.buttomTextError}>
+                <Ionicons name='close' size={20} />
+                {item}
+              </Text>
+            )}
           />
-          : null}
-        {this.state.showError ?
-          <View style={styles.buttomError}>
-            <FlatList
-              data={this.state.errors}
-              keyExtractor={item => `${item.id}`}
-              renderItem={({ item }) => {
-                return <Text style={styles.buttomTextError}><Ionicons name='close' size={20} />{item}</Text>
-              }} /></View> : null}
-        <TouchableOpacity onPress={this.signinOrSignup} style={styles.buttom}>
-          <Text style={styles.buttomText}>{this.state.stageNew ? 'Registrar' : 'Entrar'}  </Text>
-          <Ionicons name='log-in-outline' size={25} color='#fff' />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            this.setState({ stageNew: !this.state.stageNew })
-          }}
-
-          style={{
-            marginTop: 20,
-            width: '80%',
-            alignItems: 'center',
-            flexDirection: 'row'
-          }} >
-          <Text style={{
-            fontSize: 15,
-            color: '#c0c0c0',
-          }}>
-            {this.state.stageNew ? 'Já possui uma conta? Entrar' : 'Não possui conta? Criar'}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
-        onPress={() => {
-            this.props.navigation.navigate('Chat')
-        }}
+        </View>
+      )}
+      <TouchableOpacity onPress={signinOrSignup} style={styles.buttom}>
+        <Text style={styles.buttomText}>{stageNew ? 'Registrar' : 'Entrar'}</Text>
+        <Ionicons name='log-in-outline' size={25} color='#fff' />
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => setStageNew(!stageNew)}
         style={{
-            marginTop: 10,
-            width: '80%',
-            alignItems: 'center',
-            flexDirection: 'row'
-          }} >
-          <Text style={{
-            fontSize: 15,
-            color: '#c0c0c0',
-          }}>
-            Entrar como anônimo
-          </Text>
-        </TouchableOpacity>
-      </ImageBackground>
-    )
-  }
+          marginTop: 20,
+          width: '80%',
+          alignItems: 'center',
+          flexDirection: 'row'
+        }}
+      >
+        <Text style={{ fontSize: 15, color: '#c0c0c0' }}>
+          {stageNew ? 'Já possui uma conta? Entrar' : 'Não possui conta? Criar'}
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('Chat')}
+        style={{
+          marginTop: 10,
+          width: '80%',
+          alignItems: 'center',
+          flexDirection: 'row'
+        }}
+      >
+        <Text style={{ fontSize: 15, color: '#c0c0c0' }}>
+          Entrar como anônimo
+        </Text>
+      </TouchableOpacity>
+    </ImageBackground>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -271,4 +260,4 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     color: '#fff'
   },
-})
+});
