@@ -69,8 +69,8 @@ export default function Chat() {
 
   return (
     <>
-      <SafeAreaView style={{ flex: 2, backgroundColor: '#1e1e1e', width: '100%' }}>
-        <StatusBar barStyle="light-content" />
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#000000', width: '100%' }}>
+        <StatusBar barStyle="dark-content" />
         <Header />
         <FlatList
           data={conversation}
@@ -83,7 +83,7 @@ export default function Chat() {
           }
         />
         <View style={styles.inputContainer}>
-          <View style={[ styles.inputContainer, { backgroundColor: '#1e1e1e', height: 80 } ]}>
+          <View style={[ styles.inputContainer, { backgroundColor: 'transparent', height: 80 } ]}>
             <TextInput
               style={styles.userInput}
               placeholder='Digite sua dúvida ...'
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   sendButton: {
     padding: 15,
     borderRadius: 40,
-    backgroundColor: '#00d8ff'
+    backgroundColor: '#fe65c3'
   },
   inputContainer: {
     flexDirection: 'row',
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: '93%',
+    marginTop: '85%',
     position: 'absolute',
   },
   responseContainer: {

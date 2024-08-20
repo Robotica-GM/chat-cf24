@@ -186,7 +186,11 @@ export default function Login({ navigation }) {
           flexDirection: 'row'
         }}
       >
-        <Text style={{ fontSize: 15, color: '#c0c0c0' }}>
+        <Text style={{
+          fontSize: 15, color: '#c0c0c0', textShadowColor: '#000',
+          textShadowOffset: { width: 2, height: 2 },
+          textShadowRadius: 8,
+        }}>
           {stageNew ? 'Já possui uma conta? Entrar' : 'Não possui conta? Criar'}
         </Text>
       </TouchableOpacity>
@@ -199,7 +203,11 @@ export default function Login({ navigation }) {
           flexDirection: 'row'
         }}
       >
-        <Text style={{ fontSize: 15, color: '#c0c0c0' }}>
+        <Text style={{
+          fontSize: 15, color: '#c0c0c0', textShadowColor: '#000',
+          textShadowOffset: { width: 2, height: 2 },
+          textShadowRadius: 8,
+        }}>
           Entrar como anônimo
         </Text>
       </TouchableOpacity>
@@ -212,18 +220,22 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#161616'
+    backgroundColor: '#000'
   },
   title: {
     fontSize: 40,
     marginBottom: 20,
     color: '#d0d0d0',
     width: '80%',
+    fontWeight: 'bold',
+    textShadowColor: '#000',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 8,
   },
   buttom: {
     marginTop: 30,
     padding: 10,
-    backgroundColor: '#00d8ff',
+    backgroundColor: '#ff66c4',
     width: '80%',
     borderRadius: 10,
     justifyContent: 'center',
