@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList, ImageBackground, Alert } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import axios from 'axios';
+import { auth } from '../utils/firebase'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 
 export default function Login({ navigation }) {
   const [username, setUsername] = useState('');
@@ -16,97 +17,45 @@ export default function Login({ navigation }) {
   const signinOrSignup = () => {
     if (stageNew) {
       register();
-      Alert.alert('Sucesso!', 'Criar conta');
     } else {
       login();
-      Alert.alert('Sucesso!', 'Logar');
     }
-    console.log({ username, password, firstName, lastName, confirmPassword, stageNew, showError, errors });
   };
 
   const login = async () => {
-    console.log('iniciando o login');
-
-    const headers = {
-      'Content-Type': 'application/json',
-    };
-
-    const data = {
-      username,
-      password,
-    };
-
     try {
-      const response = await axios.post(
-        'https://teenpod.pythonanywhere.com/api/token/',
-        data,
-        { headers }
-      );
+      const userCredential = await signInWithEmailAndPassword(auth, username, password);
+      const user = userCredential.user;
+      console.log(user);
+      Alert.alert('Sucesso!', 'Login realizado com sucesso');
 
-      console.log('STATUS Login', response.status);
-      console.log(response.data);
-
-      if (response.status === 200) {
-        navigation.navigate('Chat');
-      } else if (response.status === 400 || response.status === 401) {
-        setShowError(true);
-        const errorList = [];
-        response.data.username && errorList.push(`Email: ${response.data.username}`);
-        response.data.password && errorList.push(`Senha: ${response.data.password}`);
-        response.data.detail && errorList.push(`Erro: ${response.data.detail}`);
-        console.log(errorList);
-        setErrors(errorList);
-      }
+      navigation.navigate('Chat');
     } catch (error) {
-      console.error('Erro na requisição:', error);
+      const errorMessage = error.message;
+      console.log(errorMessage);
+      setShowError(true);
+      setErrors([errorMessage]);
     }
   };
 
   const register = async () => {
-    console.log('iniciando o registro');
-
-    const headers = {
-      'Content-Type': 'application/json',
-    };
-
-    const data = {
-      username,
-      first_name: firstName,
-      last_name: lastName,
-      password,
-      confirm_password: confirmPassword,
-    };
+    if (password !== confirmPassword) {
+      setShowError(true);
+      setErrors(['As senhas não coincidem']);
+      return;
+    }
 
     try {
-      const response = await axios.post(
-        'https://teenpod.pythonanywhere.com/api/users/',
-        data,
-        { headers }
-      );
-
-      console.log('STATUS Register', response.status);
-      console.log(response.data);
-
-      if (response.status === 201) {
-        setUsername('');
-        setPassword('');
-        setFirstName('');
-        setLastName('');
-        setConfirmPassword('');
-        setStageNew(false);
-        setShowError(false);
-        setErrors([]);
-      } else if (response.status >= 400 && response.status < 500) {
-        setShowError(true);
-        const errorList = [];
-        response.data.username && errorList.push(`Email: ${response.data.username}`);
-        response.data.password && errorList.push(`Senha: ${response.data.password}`);
-        response.data.detail && errorList.push(`Erro: ${response.data.detail}`);
-        console.log(errorList);
-        setErrors(errorList);
-      }
+      const userCredential = await createUserWithEmailAndPassword(auth, username, password);
+      const user = userCredential.user;
+      console.log(user);
+      Alert.alert('Sucesso!', 'Conta criada com sucesso');
+      setStageNew(false)
     } catch (error) {
-      console.error('Erro na requisição:', error);
+      const errorMessage = error.message;
+      console.log(errorMessage);
+      setShowError(true);
+      setErrors([errorMessage]);
     }
   };
 
@@ -116,7 +65,7 @@ export default function Login({ navigation }) {
         {stageNew ? 'Crie sua conta' : 'Faça seu Login'}
       </Text>
       <TextInput
-        placeholder='Nome de Usuário, sem espaços, somente letra minuscula sem acento'
+        placeholder='Email'
         style={styles.input}
         autoFocus={true}
         value={username}
