@@ -6,12 +6,14 @@ import {
   View,
   StatusBar,
   FlatList,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Header from '../components/header';
 import ResponseContainer from '../components/response-container';
-import conversation from '../assets/conversation'
+import conversation from '../assets/conversation';
 
 export default function Chat() {
   const [userInput, setUserInput] = useState('');
@@ -44,10 +46,10 @@ export default function Chat() {
         user: false,
         msg: json.choices[0].message.content,
       };
-      console.log(json)
+      console.log(json);
       setMessages(prevMessages => [...prevMessages, msgContents]);
     })
-    .catch(e => console.log(e))
+    .catch(e => console.log(e));
   }
 
   const saveUserMessages = () => {
@@ -76,14 +78,14 @@ export default function Chat() {
           data={conversation}
           renderItem={({ item }) => {
             if (item.user === true) return <ResponseContainer msg={item.msg} userMsg={item.user}  />;
-            return <ResponseContainer
-              msg={item.msg}
-            />;
-          }
-          }
+            return <ResponseContainer msg={item.msg} />;
+          }}
         />
-        <View style={styles.inputContainer}>
-          <View style={[ styles.inputContainer, { backgroundColor: 'transparent', height: 80 } ]}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={styles.inputContainer}
+        >
+          <View style={[ styles.inputInnerContainer, { backgroundColor: 'transparent', height: 80 } ]}>
             <TextInput
               style={styles.userInput}
               placeholder='Digite sua dúvida ...'
@@ -93,14 +95,12 @@ export default function Chat() {
             />
             <TouchableOpacity
               style={styles.sendButton}
-              onPress={() => {
-                saveUserMessages()
-              }}
+              onPress={saveUserMessages}
             >
               <Ionicons color='#fff' name='send' size={30} />
             </TouchableOpacity>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </>
   );
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     height: '92%',
     display: 'flex',
     justifyContent: 'space-between',
-    width: '100%'
+    width: '100%',
   },
   userInput: {
     backgroundColor: '#151515',
@@ -119,21 +119,25 @@ const styles = StyleSheet.create({
     padding: 20,
     width: '75%',
     color: '#fff',
-    margin: 10
+    margin: 10,
   },
   sendButton: {
     padding: 15,
     borderRadius: 40,
-    backgroundColor: '#fe65c3'
+    backgroundColor: '#fe65c3',
   },
   inputContainer: {
     flexDirection: 'row',
     width: '100%',
-    height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: '85%',
     position: 'absolute',
+    bottom: 0,
+  },
+  inputInnerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   responseContainer: {
     width: '60%',

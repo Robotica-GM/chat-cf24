@@ -5,20 +5,27 @@ export default function Header() {
     return (
       <View style={styles.headerContainer}>
         <Image style={styles.imgHeader} source={require('../../assets/chataihelp-logo.png')} />
+        <Image style={styles.iconHeader} source={require('../../assets/icon-account.webp')} />
       </View>
     )
 }
 
 const styles = StyleSheet.create({
   headerContainer: {
-    maxHeight: 100,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     padding: 10,
     width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center'
+    backgroundColor: '#000000', 
   },
   imgHeader: {
-    maxHeight: 50,
-    resizeMode: 'contain'
+    height: 43, 
+    width: 280
+
+  },
+  iconHeader: {
+    height: 30, 
+    width: 30,
   }
 })
