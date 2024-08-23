@@ -72,7 +72,7 @@ export default function Chat() {
         <StatusBar barStyle="light-content" />
         <Header />
         <FlatList
-          data={conversation}
+          data={messages}
           renderItem={({ item }) => {
             if (item.user === true) return <ResponseContainer msg={item.msg} userMsg={item.user}  />;
             return <ResponseContainer msg={item.msg} />;
