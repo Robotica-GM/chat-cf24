@@ -35,7 +35,7 @@ export default function Chat() {
       },
       body: JSON.stringify({
         model: "gpt-3.5-turbo",
-        messages: [{ role: "system", content: `${prompt} gere oque deve ser feito após isso, oque e quem deve ser procurado para que o problema seja resolvido` }],
+        messages: [{ role: "system", content: `"${prompt}", caso essa mensagem seja sobre algum tipo de discriminação conta a mulher ajude a encontrar uma solução para esse problema de discriminação contra a mulher, pontue pontos essenciais, mas se for uma mensagem normal, continue a conversa agradavelmente;` }],
         max_tokens: 256,
         temperature: 0.4,
       }),
@@ -53,9 +53,6 @@ export default function Chat() {
   }
 
   const saveUserMessages = () => {
-    if (userInput.trim() === '') {
-      return;
-    }
   
     const userMsgContent = {
       user: true,
@@ -71,8 +68,8 @@ export default function Chat() {
 
   return (
     <>
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#000000', width: '100%' }}>
-        <StatusBar barStyle="dark-content" />
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#000000', width: '100%', paddingBottom: 85 }}>
+        <StatusBar barStyle="light-content" />
         <Header />
         <FlatList
           data={conversation}
